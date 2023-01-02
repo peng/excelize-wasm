@@ -817,29 +817,7 @@ func AddPictureFromBytes(f *excelize.File) func(this js.Value, args []js.Value) 
 	}
 }
 
-// AddPivotTable provides the method to add pivot table by given pivot table
-// options. Note that the same fields can not in Columns, Rows and Filter
-// fields at the same time.
-func AddPivotTable(f *excelize.File) func(this js.Value, args []js.Value) interface{} {
-	return func(this js.Value, args []js.Value) interface{} {
-		ret := map[string]interface{}{"error": nil}
-		if err := prepareArgs(args, []argsRule{
-			{types: []js.Type{js.TypeString}},
-		}); err != nil {
-			ret["error"] = err.Error()
-			return js.ValueOf(ret)
-		}
-		var opt excelize.PivotTableOptions
-		if err := json.Unmarshal([]byte(args[0].String()), &opt); err != nil {
-			ret["error"] = err.Error()
-			return js.ValueOf(ret)
-		}
-		if err := f.AddPivotTable(&opt); err != nil {
-			ret["error"] = err.Error()
-		}
-		return js.ValueOf(ret)
-	}
-}
+
 
 // AddShape provides the method to add shape in a sheet by given worksheet
 // index, shape format set (such as offset, scale, aspect ratio setting and

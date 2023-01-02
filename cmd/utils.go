@@ -1,35 +1,34 @@
 package main
 
 import (
-	"errors"
 	"syscall/js"
 )
 
 // expectType expect js type string, number, boolean, null, undefined, object, array, function
-func TypeCheck(jsValue js.Value, expectType string) (bool, error) {
+func TypeCheck(jsValue js.Value, expectType string) bool {
 	if expectType == "string" {
-		return jsValue.Type() == js.TypeString, nil
+		return jsValue.Type() == js.TypeString
 	} else if expectType == "number" {
-		return jsValue.Type() == js.TypeNumber, nil
+		return jsValue.Type() == js.TypeNumber
 	} else if expectType == "boolean" {
-		return jsValue.Type() == js.TypeBoolean, nil
+		return jsValue.Type() == js.TypeBoolean
 	} else if expectType == "null" {
-		return jsValue.Type() == js.TypeNull, nil
+		return jsValue.Type() == js.TypeNull
 	} else if expectType == "undefined" {
-		return jsValue.Type() == js.TypeUndefined, nil
+		return jsValue.Type() == js.TypeUndefined
 	} else if expectType == "array" {
-		return jsValue.Type() == js.TypeObject && jsValue.Length() >= 0, nil
+		return jsValue.Type() == js.TypeObject && jsValue.Length() >= 0
 	} else if expectType == "object" {
-		return jsValue.Type() == js.TypeObject, nil
+		return jsValue.Type() == js.TypeObject
 	} else if expectType == "function" {
-		return jsValue.Type() == js.TypeFunction, nil
+		return jsValue.Type() == js.TypeFunction
 	}
-	return false, errors.New("No such expect error")
+	return false
 }
 
-func TypeCheckOpt(jsValue js.Value, expectType string) (bool, error) {
+func TypeCheckOpt(jsValue js.Value, expectType string) bool {
 	if jsValue.Type() == js.TypeUndefined {
-		return true, nil
+		return true
 	}
 	return TypeCheck(jsValue, expectType)
 }
