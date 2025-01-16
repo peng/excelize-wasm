@@ -573,20 +573,20 @@ export async function init(wasmPath) {
   const go = new Go();
   var buffer;
   if (typeof globalThis.navigator === 'undefined') {
-    console.log('node=====')
+    // console.log('node=====')
     globalThis.excelize = {};
     const fs = await import('fs');
     buffer = pako.ungzip(fs.readFileSync(wasmPath));
   } else {
-    console.log('browser==')
+    // console.log('browser==')
     window.excelize = {};
     buffer = pako.ungzip(await (await fetch(wasmPath)).arrayBuffer());
   }
   if (buffer[0] === 0x1f && buffer[1] === 0x8b) {
       buffer = pako.ungzip(buffer);
   }
-  console.log(go.importObject, 'go.importObject')
-  console.log(buffer, 'buffer====')
+  // console.log(go.importObject, 'go.importObject')
+  // console.log(buffer, 'buffer====')
   const result = await WebAssembly.instantiate(buffer, go.importObject);
   go.run(result.instance);
   return excelize;
