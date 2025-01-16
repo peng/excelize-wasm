@@ -1,11 +1,11 @@
-if (typeof window === 'undefined') {
-  !global.crypto && (global.crypto = {
+if (typeof globalThis.navigator === 'undefined') {
+  !globalThis.crypto && (globalThis.crypto = {
     async getRandomValues(b) {
       const { randomFillSync } = await import('crypto');
       randomFillSync(b);
     }
   });
-  !global.performance && (global.performance = {
+  !globalThis.performance && (globalThis.performance = {
     now() {
       const [sec, nsec] = process.hrtime();
       return sec * 1000 + nsec / 1000000;
@@ -531,7 +531,7 @@ if (typeof window === 'undefined') {
         offset += 8;
       });
 
-      // The linker guarantees global data starts from at least wasmMinDataAddr.
+      // The linker guarantees globalThis data starts from at least wasmMinDataAddr.
       // Keep in sync with cmd/link/internal/ld/data.go:wasmMinDataAddr.
       const wasmMinDataAddr = 4096 + 8192;
       if (offset >= wasmMinDataAddr) {
@@ -572,17 +572,21 @@ import pako from 'pako';
 export async function init(wasmPath) {
   const go = new Go();
   var buffer;
-  if (typeof window === 'undefined') {
-    global.excelize = {};
+  if (typeof globalThis.navigator === 'undefined') {
+    console.log('node=====')
+    globalThis.excelize = {};
     const fs = await import('fs');
     buffer = pako.ungzip(fs.readFileSync(wasmPath));
   } else {
+    console.log('browser==')
     window.excelize = {};
     buffer = pako.ungzip(await (await fetch(wasmPath)).arrayBuffer());
   }
   if (buffer[0] === 0x1f && buffer[1] === 0x8b) {
       buffer = pako.ungzip(buffer);
   }
+  console.log(go.importObject, 'go.importObject')
+  console.log(buffer, 'buffer====')
   const result = await WebAssembly.instantiate(buffer, go.importObject);
   go.run(result.instance);
   return excelize;
